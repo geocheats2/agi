@@ -1,0 +1,34 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "csa/task.schema.json",
+  "title": "CSA Task",
+  "description": "Durable unit of work (table: tasks). Status transitions are enforced by the runtime state machine; token/cost counters are monotonic non-decreasing.",
+  "type": "object",
+  "required": ["task_id", "owner_agent_id", "objective", "status", "max_tokens", "max_cost_usd", "tokens_used", "cost_usd", "created_at"],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": { "type": "string", "pattern": "^task-[0-9a-f]{32}$" },
+    "parent_task_id": { "type": ["string", "null"], "pattern": "^task-[0-9a-f]{32}$" },
+    "owner_agent_id": { "type": "string", "pattern": "^agent-[a-z]+-[0-9a-f]{8}$" },
+    "type": { "type": "string", "default": "generic" },
+    "objective": { "type": "string", "minLength": 1 },
+    "acceptance_json": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "status": { "enum": ["queued", "active", "blocked", "completed", "failed", "cancelled", "timed_out"] },
+    "step": { "type": ["string", "null"] },
+    "result_ref": { "type": ["string", "null"] },
+    "max_tokens": { "type": "integer", "minimum": 1 },
+    "max_cost_usd": { "type": "number", "minimum": 0 },
+    "tokens_used": { "type": "integer", "minimum": 0 },
+    "cost_usd": { "type": "number", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "activated_at": { "type": ["string", "null"], "format": "date-time" },
+    "finished_at": { "type": ["string", "null"], "format": "date-time" },
+    "error": { "type": ["string", "null"] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "enum": ["completed", "failed", "cancelled", "timed_out"] } } },
+      "then": { "required": ["finished_at"] }
+    }
+  ]
+}

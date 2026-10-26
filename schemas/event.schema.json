@@ -1,0 +1,31 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "csa/event.schema.json",
+  "title": "CSA Event",
+  "description": "Append-only audit record (table: events). Rows are NEVER updated or deleted; a full task history is reconstructable from this stream alone.",
+  "type": "object",
+  "required": ["event_id", "ts", "type", "actor", "severity", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": { "type": "integer", "minimum": 1 },
+    "ts": { "type": "string", "format": "date-time" },
+    "type": {
+      "type": "string",
+      "enum": [
+        "agent_created", "task_created", "task_activated", "task_paused",
+        "task_resumed", "task_cancelled", "task_completed", "task_failed",
+        "step_started", "step_reused", "model_call_completed",
+        "artifact_written", "recovery_reactivated"
+      ]
+    },
+    "actor": { "type": "string", "minLength": 1 },
+    "task_id": { "type": ["string", "null"] },
+    "agent_id": { "type": ["string", "null"] },
+    "prior_state_version": { "type": ["integer", "null"] },
+    "resulting_state_version": { "type": ["integer", "null"] },
+    "severity": { "type": "string", "enum": ["debug", "info", "warning", "error"] },
+    "authorization": { "type": ["string", "null"], "description": "Policy/permission reference for policy-relevant events (populated rigorously in Phase 5)." },
+    "summary": { "type": "string" },
+    "payload_json": { "type": ["object", "null"] }
+  }
+}

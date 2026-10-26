@@ -1,0 +1,20 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "csa/agent.schema.json",
+  "title": "CSA Agent",
+  "description": "Durable agent identity (table: agents). An agent is an identity + policy context, not a model instance.",
+  "type": "object",
+  "required": ["agent_id", "role", "model_name", "config_version", "constitution_version", "created_at", "updated_at"],
+  "additionalProperties": false,
+  "properties": {
+    "agent_id": { "type": "string", "pattern": "^agent-[a-z]+-[0-9a-f]{8}$" },
+    "role": { "type": "string", "minLength": 1 },
+    "model_name": { "type": "string", "minLength": 1 },
+    "config_version": { "type": "string", "minLength": 1 },
+    "constitution_version": { "type": "string", "minLength": 1 },
+    "state_json": { "type": "object", "description": "Opaque agent state; versioned with state_version." },
+    "state_version": { "type": "integer", "minimum": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
